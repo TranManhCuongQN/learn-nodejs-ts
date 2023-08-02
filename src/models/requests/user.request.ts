@@ -23,6 +23,14 @@ export interface LogoutReqBody {
   refresh_token: string
 }
 
+export interface ForgotPasswordReqBody {
+  email: string
+}
+
+export interface VerifyForgotPasswordReqBody {
+  forgot_password_token: string
+}
+
 // JwtPayload lúc nào cũng phải thêm 2 ông nữa user_id và token_type nên phải tạo ra 1 interface mới kế thừa JwtPayload
 export interface TokenPayload extends JwtPayload {
   user_id: string
