@@ -1,6 +1,7 @@
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  followValidator,
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
@@ -11,6 +12,7 @@ import {
 } from './../middlewares/users.middleware'
 import { Router } from 'express'
 import {
+  followController,
   forgotPasswordController,
   getMeController,
   getProfileController,
@@ -58,6 +60,13 @@ usersRouter.patch(
   wrapRequestHandler(updateMeController)
 )
 usersRouter.get('/:username', wrapRequestHandler(getProfileController))
+usersRouter.post(
+  '/follow',
+  accessTokenValidator,
+  verifiedUserValidator,
+  followValidator,
+  wrapRequestHandler(followController)
+)
 
 usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 usersRouter.post(
