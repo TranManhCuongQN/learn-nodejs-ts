@@ -1,5 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenType } from '~/constants/enum'
+import { ParamsDictionary } from 'express-serve-static-core'
+
 // đinh nghĩa các request body cho user
 
 export interface UpdateMeReqBody {
@@ -26,8 +28,12 @@ export interface VerifyEmailReqBody {
   email_verify_token: string
 }
 
-export interface GetProfileReqParams {
+export interface GetProfileReqParams extends ParamsDictionary {
   username: string
+}
+
+export interface UnfollowReqParams extends ParamsDictionary {
+  user_id: string
 }
 
 export interface ResetPasswordReqBody {
