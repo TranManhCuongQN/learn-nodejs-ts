@@ -4,6 +4,7 @@ import usersRouter from './routes/users.router'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
 import { initFolder } from './utils/file'
+import { UPLOAD_DIR } from '~/constants/dir'
 import { config } from 'dotenv'
 
 const app = express()
@@ -17,6 +18,8 @@ initFolder()
 
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+
+app.use('/static', express.static(UPLOAD_DIR))
 
 app.use(defaultErrorHandler)
 
