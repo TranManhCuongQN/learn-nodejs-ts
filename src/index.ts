@@ -7,10 +7,12 @@ import { initFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { config } from 'dotenv'
 import staticRouter from './routes/static.router'
+import cors from 'cors'
 
 const app = express()
 const port = process.env.PORT || 4000
 app.use(express.json())
+app.use(cors())
 
 databaseService.connect()
 
