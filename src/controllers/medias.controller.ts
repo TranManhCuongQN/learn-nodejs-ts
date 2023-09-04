@@ -42,13 +42,12 @@ export const serveImageController = (req: Request, res: Response, next: NextFunc
 
 export const serveVideoStreamController = (req: Request, res: Response, next: NextFunction) => {
   const range = req.headers.range
-  console.log('range', range)
+
   if (!range) {
     return res.status(HTTP_STATUS.BAD_REQUEST).send('Requires Range header')
   }
   const { name } = req.params
 
-  console.log('name', name)
   const videoPath = path.resolve(UPLOAD_VIDEO_DIR, name)
   // 1MB = 10^6 bytes (Tính theo hệ 10, đây là thứ mà chúng ta hay thấy trên UI)
   // Còn nếu tính theo hệ nhị phân thì 1MB = 2^20 bytes (1024 * 1024)
@@ -97,10 +96,7 @@ export const serveVideoStreamController = (req: Request, res: Response, next: Ne
 }
 
 export const serveM3u8Controller = (req: Request, res: Response, next: NextFunction) => {
-  console.log(1)
   const { id } = req.params
-
-  console.log('id', id)
 
   return res.sendFile(path.resolve(UPLOAD_VIDEO_DIR, id, 'master.m3u8'), (err) => {
     if (err) {
