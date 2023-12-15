@@ -15,6 +15,8 @@ export const uploadImageController = async (req: Request, res: Response, next: N
   })
 }
 
+
+
 export const uploadVideoController = async (req: Request, res: Response, next: NextFunction) => {
   const url = await mediasService.uploadVideo(req)
   return res.json({
@@ -122,3 +124,5 @@ export const videoStatusController = async (req: Request, res: Response, next: N
     result: result
   })
 }
+
+

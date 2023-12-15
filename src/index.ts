@@ -14,7 +14,9 @@ const port = process.env.PORT || 4000
 app.use(express.json())
 app.use(cors())
 
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+})
 
 //  tao folder upload
 initFolder()
