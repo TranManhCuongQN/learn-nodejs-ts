@@ -77,4 +77,6 @@ export interface TokenPayload extends JwtPayload {
   user_id: string
   token_type: TokenType
   verify: UserVerifyStatus
+  exp: number // thời gian kết thúc token này
+  iat: number // thời gian bắt đầu token có hiệu lực
 }
