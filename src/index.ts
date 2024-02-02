@@ -16,6 +16,9 @@ app.use(cors())
 
 databaseService.connect().then(() => {
   databaseService.indexUsers()
+  databaseService.indexRefreshTokens()
+  databaseService.indexVideoStatus()
+  databaseService.indexFollowers()
 })
 
 //  tao folder upload

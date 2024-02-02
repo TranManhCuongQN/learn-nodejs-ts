@@ -27,10 +27,39 @@ class DatabaseService {
     }
   }
 
-  indexUsers(){
-    this.users.createIndex({ email: 1, password:1 }, )
-    this.users.createIndex({email: 1}, {unique: true})
-    this.users.createIndex({username: 1}, {unique: true})
+  indexUsers() {
+    this.users.createIndex({ email: 1, password: 1 })
+    this.users.createIndex({ email: 1 }, { unique: true })
+    this.users.createIndex({ username: 1 }, { unique: true })
+  }
+
+  // Mongodb có 1 background task là một tác vụ chạy ngầm, nó sẽ chạy khoảng 60s 1 lần (sau 1 phút nó sẽ chạy 1 lần) để kiểm tra xem thử còn thời gian sống (TTL - time to live ) hay không, nếu hết thời gian sống thì nó sẽ xóa dữ liệu đó đi
+  indexRefreshTokens() {
+    this.refreshTokens.createIndex({ token: 1 })
+
+    // Sau 1 khoảng thời gian là 10s là exp sẽ hết hạn
+    // this.refreshTokens.createIndex(
+    //   { exp: 1 },
+    //   {
+    //     expireAfterSeconds: 10
+    //   }
+    // )
+
+    // sau 1 thời điểm nào đó, token hết hạn => nó sẽ không còn giá trị nữa => xóa nó ra khỏi database => mongodb có thể tự động xóa được không cần phải can thiệp (time to live)
+    // Hết hạn nó sẽ dựa vào mốc thời gian exp
+    // sau 1 phút background của mongodb sẽ chạy và xem thử ông nào hết hạn thì xóa đi
+    this.refreshTokens.createIndex(
+      { exp: 1 },
+      {
+        expireAfterSeconds: 0
+      }
+    )
+  }
+  indexVideoStatus() {
+    this.videoStatus.createIndex({ name: 1 })
+  }
+  indexFollowers() {
+    this.followers.createIndex({ user_id: 1, followed_user_id: 1 })
   }
 
   get users(): Collection<User> {
