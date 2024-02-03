@@ -148,6 +148,7 @@ const dateOfBirthSchema: ParamSchema = {
 }
 
 const imageSchema: ParamSchema = {
+  // optinal không bắt buộc phải có trong body (có thể không gửi ảnh lên server, nếu gửi thì phải đúng định dạng string)
   optional: true,
   isString: {
     errorMessage: USERS_MESSAGES.IMAGE_URL_MUST_BE_STRING
