@@ -5,6 +5,7 @@ import RefreshToken from '~/models/schemas/refreshToken.schema'
 import Follower from '~/models/schemas/follower.schema'
 config()
 import VideoStatus from '~/models/schemas/videoStatus.schema'
+import Tweet from '~/models/schemas/tweet.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.0dsjf2z.mongodb.net/?retryWrites=true&w=majority`
 
@@ -97,6 +98,10 @@ class DatabaseService {
 
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(process.env.DB_VIDEO_STATUS_COLLECTION as string)
+  }
+
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
   }
 }
 
