@@ -8,6 +8,7 @@ import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { config } from 'dotenv'
 import staticRouter from './routes/static.router'
 import cors from 'cors'
+import tweetsRouter from './routes/twwets.route'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -26,6 +27,7 @@ initFolder()
 
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/tweets', tweetsRouter)
 
 // app.use('/static', express.static(UPLOAD_IMAGE_DIR))
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
