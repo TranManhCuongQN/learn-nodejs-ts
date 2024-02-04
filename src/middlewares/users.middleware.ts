@@ -548,3 +548,13 @@ export const changePasswordValidator = validate(
     confirm_new_password: confirmPasswordSchema
   })
 )
+
+// Middleware này sẽ kiểm tra xem user đã đăng nhập chưa (everyone mọi người có thể xem, tweet circle chỉ những người trong circle mới xem được)
+export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization) {
+      return middleware(req, res, next)
+    }
+    next()
+  }
+}

@@ -8,7 +8,7 @@ import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import { config } from 'dotenv'
 import staticRouter from './routes/static.router'
 import cors from 'cors'
-import tweetsRouter from './routes/twwets.route'
+import tweetsRouter from './routes/tweet.router'
 import bookmarksRouter from './routes/bookmarks.router'
 import likesRouter from './routes/likes.router'
 
