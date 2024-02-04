@@ -1,31 +1,30 @@
 import { Router } from 'express'
-import { bookmarkTweetController, unbookmarkTweetController } from '~/controllers/bookmark.controller'
+import { likeTweetController, unlikeTweetController } from '~/controllers/likes.controller'
 import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
 
-const bookmarksRouter = Router()
+const likesRouter = Router()
 /**
- * Description: Bookmark Tweet
+ * Description: Like Tweet
  * Path: /
  * Method: POST
  * Body: { tweet_id: string }
  * Header: { Authorization: Bearer <access_token> }
  */
-bookmarksRouter.post('', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(bookmarkTweetController))
+likesRouter.post('', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(likeTweetController))
 
 /**
- * Description: Unbookmark Tweet
+ * Description: Unlike Tweet
  * Path: /tweets/:tweet_id
  * Method: DELETE
  * Body: { tweet_id: string }
  * Header: { Authorization: Bearer <access_token> }
  */
-//  Có thể tạo ra 1 endPoint "/tweets/:bookmark_id"
-bookmarksRouter.delete(
+likesRouter.delete(
   '/tweets/:tweet_id',
   accessTokenValidator,
   verifiedUserValidator,
-  wrapRequestHandler(unbookmarkTweetController)
+  wrapRequestHandler(unlikeTweetController)
 )
 
-export default bookmarksRouter
+export default likesRouter

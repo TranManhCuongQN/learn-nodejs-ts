@@ -8,6 +8,7 @@ import VideoStatus from '~/models/schemas/videoStatus.schema'
 import Tweet from '~/models/schemas/tweet.schema'
 import Hashtag from '~/models/schemas/hashtag.schema'
 import Bookmark from '~/models/schemas/bookmark.schema'
+import Like from '~/models/schemas/like.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.0dsjf2z.mongodb.net/?retryWrites=true&w=majority`
 
@@ -114,6 +115,10 @@ class DatabaseService {
 
   get bookmarks(): Collection<Bookmark> {
     return this.db.collection(process.env.DB_BOOKMARKS_COLLECTION as string)
+  }
+
+  get likes(): Collection<Like> {
+    return this.db.collection(process.env.DB_LIKES_COLLECTION as string)
   }
 }
 
