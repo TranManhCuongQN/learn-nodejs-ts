@@ -6,6 +6,7 @@ import Follower from '~/models/schemas/follower.schema'
 config()
 import VideoStatus from '~/models/schemas/videoStatus.schema'
 import Tweet from '~/models/schemas/tweet.schema'
+import Hashtag from '~/models/schemas/hashtag.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.0dsjf2z.mongodb.net/?retryWrites=true&w=majority`
 
@@ -70,6 +71,7 @@ class DatabaseService {
     //   }
     // )
   }
+
   async indexVideoStatus() {
     const exists = await this.videoStatus.indexExists(['name_1'])
 
@@ -77,6 +79,7 @@ class DatabaseService {
       this.videoStatus.createIndex({ name: 1 })
     }
   }
+
   async indexFollowers() {
     const exists = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
     if (!exists) {
@@ -102,6 +105,10 @@ class DatabaseService {
 
   get tweets(): Collection<Tweet> {
     return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
+  }
+
+  get hashtags(): Collection<Hashtag> {
+    return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
   }
 }
 
