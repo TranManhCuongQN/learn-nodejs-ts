@@ -5,10 +5,10 @@ import RefreshToken from '~/models/schemas/refreshToken.schema'
 import Follower from '~/models/schemas/follower.schema'
 config()
 import VideoStatus from '~/models/schemas/videoStatus.schema'
-import Tweet from '~/models/schemas/tweet.schema'
 import Hashtag from '~/models/schemas/hashtag.schema'
 import Bookmark from '~/models/schemas/bookmark.schema'
 import Like from '~/models/schemas/like.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.0dsjf2z.mongodb.net/?retryWrites=true&w=majority`
 

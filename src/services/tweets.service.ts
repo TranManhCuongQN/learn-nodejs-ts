@@ -1,8 +1,8 @@
 import { ObjectId, WithId } from 'mongodb'
 import { TweetRequestBody } from '~/models/requests/tweet.request'
-import Tweet from '~/models/schemas/tweet.schema'
 import databaseService from '~/services/database.service'
 import Hashtag from '~/models/schemas/hashtag.schema'
+import Tweet from '~/models/schemas/Tweet.schema'
 class TweetsService {
   async checkAndCreateHashtags(hashtags: string[]) {
     const hashtagDocuemts = await Promise.all(
