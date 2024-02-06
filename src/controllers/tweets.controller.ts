@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { TweetType } from '~/constants/enum'
-import { TweetRequestBody } from '~/models/requests/tweet.request'
+import { TweetParam, TweetQuery, TweetRequestBody } from '~/models/requests/tweet.request'
 import { TokenPayload } from '~/models/requests/user.request'
 import tweetsService from '~/services/tweets.service'
 
@@ -28,10 +28,10 @@ export const getTweetController = async (req: Request, res: Response) => {
   })
 }
 
-export const getTweetChildrenController = async (req: Request, res: Response) => {
-  const tweet_type = Number(req.query.tweet_type as string) as TweetType
-  const limit = Number(req.query.limit as string)
-  const page = Number(req.query.page as string)
+export const getTweetChildrenController = async (req: Request<TweetParam, any, any, TweetQuery>, res: Response) => {
+  const tweet_type = Number(req.query.tweet_type) as TweetType
+  const limit = Number(req.query.limit)
+  const page = Number(req.query.page)
   const user_id = req.decoded_authorization?.user_id
   const { total, tweets } = await tweetsService.getTweetChildren({
     tweet_id: req.params.tweet_id,
