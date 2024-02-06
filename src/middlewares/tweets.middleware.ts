@@ -11,6 +11,7 @@ import databaseService from '~/services/database.service'
 import Tweet from '~/models/schemas/Tweet.schema'
 import { wrapRequestHandler } from '~/utils/handlers'
 import { NextFunction, Request, Response } from 'express'
+import exp from 'constants'
 
 const tweetTypes = numberEnumToArray(TweetType)
 const tweetAudiences = numberEnumToArray(TweetAudience)
@@ -303,7 +304,15 @@ export const getTweetChildrenValidator = validate(
           options: [tweetTypes],
           errorMessage: TWEETS_MESSAGES.INVALID_TYPE
         }
-      },
+      }
+    },
+    ['query']
+  )
+)
+
+export const paginationValidator = validate(
+  checkSchema(
+    {
       limit: {
         isNumeric: true,
         custom: {
