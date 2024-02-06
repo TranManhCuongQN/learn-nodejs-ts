@@ -43,6 +43,33 @@ class TweetsService {
     const tweet = await databaseService.tweets.findOne({ _id: result.insertedId })
     return tweet
   }
+
+  async increaseView(tweet_id: string, user_id?: string) {
+    const inc = user_id ? { user_views: 1 } : { guest_views: 1 }
+
+    // projection: chỉ lấy ra những field mà mình cần, ở đây chỉ cần lấy ra 2 field là guest_views và user_views
+    const result = await databaseService.tweets.findOneAndUpdate(
+      { _id: new ObjectId(tweet_id) },
+      {
+        $inc: inc,
+        $currentDate: {
+          updated_at: true
+        }
+      },
+      {
+        returnDocument: 'after',
+        projection: {
+          guest_views: 1,
+          user_views: 1
+        }
+      }
+    )
+
+    return result.value as WithId<{
+      guest_views: number
+      user_views: number
+    }>
+  }
 }
 
 const tweetsService = new TweetsService()
