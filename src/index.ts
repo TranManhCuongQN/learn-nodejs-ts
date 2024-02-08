@@ -11,6 +11,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweet.router'
 import bookmarksRouter from './routes/bookmarks.router'
 import likesRouter from './routes/likes.router'
+import searchRouter from '~/routes/search.router'
 // import '~/utils/fake'
 
 const app = express()
@@ -33,6 +34,7 @@ app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
+app.use('/search', searchRouter)
 
 // app.use('/static', express.static(UPLOAD_IMAGE_DIR))
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
