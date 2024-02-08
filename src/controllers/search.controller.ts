@@ -18,8 +18,8 @@ export const searchController = async (req: Request<ParamsDictionary, any, any, 
     result: {
       tweets: result.tweets,
       limit,
-      page
-      // total_page: Math.ceil(result.total / limit)
+      page,
+      total_page: Math.ceil(result.total / limit)
     }
   })
 }

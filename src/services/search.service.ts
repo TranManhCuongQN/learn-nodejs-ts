@@ -6,7 +6,6 @@ import { TweetType } from '~/constants/enum'
 class SearchService {
   //$text nó sẽ tìm kiếm trong các trường có index text, sau khi tìm kiếm các trường có index text xong thì sau đó $search sẽ tìm kiếm trong các trường có index text có giá trị giống với content
   async search({ limit, page, content, user_id }: { limit: number; page: number; content: string; user_id: string }) {
-    console.log('search', content)
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
@@ -45,6 +44,16 @@ class SearchService {
                       'user.twitter_circle': {
                         $in: [new ObjectId(user_id)]
                       }
+                    }
+                  ]
+                },
+                {
+                  $and: [
+                    {
+                      audience: 1
+                    },
+                    {
+                      'user._id': new ObjectId(user_id)
                     }
                   ]
                 }
@@ -209,6 +218,16 @@ class SearchService {
                       }
                     }
                   ]
+                },
+                {
+                  $and: [
+                    {
+                      audience: 1
+                    },
+                    {
+                      'user._id': new ObjectId(user_id)
+                    }
+                  ]
                 }
               ]
             }
@@ -219,10 +238,6 @@ class SearchService {
         ])
         .toArray()
     ])
-
-    console.log('user_id', user_id)
-    console.log('total', total)
-    console.log('tweets', tweets)
 
     const tweet_ids = tweets.map((tweet) => tweet._id as ObjectId)
     const date = new Date()
@@ -245,8 +260,8 @@ class SearchService {
       tweet.user_views += 1
     })
     return {
-      tweets
-      // total: total[0].total
+      tweets,
+      total: total[0].total
     }
   }
 }
