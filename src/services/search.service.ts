@@ -1,7 +1,7 @@
 import { SearchQuery } from '~/models/requests/search.request'
 import databaseService from '~/services/database.service'
 import { ObjectId } from 'mongodb'
-import { MediaType, MediaTypeQuery, TweetType } from '~/constants/enum'
+import { MediaType, MediaTypeQuery, PeopleFollow, TweetType } from '~/constants/enum'
 
 class SearchService {
   //$text nó sẽ tìm kiếm trong các trường có index text, sau khi tìm kiếm các trường có index text xong thì sau đó $search sẽ tìm kiếm trong các trường có index text có giá trị giống với content
@@ -18,7 +18,7 @@ class SearchService {
     content: string
     user_id: string
     media_type?: MediaTypeQuery
-    people_follow?: string
+    people_follow?: PeopleFollow
   }) {
     const $match: any = {
       $text: {
@@ -47,7 +47,7 @@ class SearchService {
     }
 
     // search từ những người mình follow
-    if (people_follow && people_follow === '1') {
+    if (people_follow && people_follow === PeopleFollow.Following) {
       const user_id_obj = new ObjectId(user_id)
       const followed_user_ids = await databaseService.followers
         .find(
