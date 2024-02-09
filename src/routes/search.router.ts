@@ -1,9 +1,8 @@
 import { Router } from 'express'
 import { searchController } from '~/controllers/search.controller'
-import { accessTokenValidator } from '~/middlewares/users.middleware'
-import { wrapRequestHandler } from '~/utils/handlers'
+import { accessTokenValidator, verifiedUserValidator } from '~/middlewares/users.middleware'
 const searchRouter = Router()
 
-searchRouter.get('/', accessTokenValidator, wrapRequestHandler(searchController))
+searchRouter.get('/', accessTokenValidator, verifiedUserValidator, searchController)
 
 export default searchRouter

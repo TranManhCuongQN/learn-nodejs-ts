@@ -524,7 +524,7 @@ class TweetsService {
     // total: [ { total: 800 } ] => total[0].total
     return {
       tweets,
-      total: total[0].total
+      total: total[0]?.total || 0
     }
   }
 }
