@@ -1,20 +1,53 @@
 import { SearchQuery } from '~/models/requests/search.request'
 import databaseService from '~/services/database.service'
 import { ObjectId } from 'mongodb'
-import { TweetType } from '~/constants/enum'
+import { MediaType, MediaTypeQuery, TweetType } from '~/constants/enum'
 
 class SearchService {
   //$text nó sẽ tìm kiếm trong các trường có index text, sau khi tìm kiếm các trường có index text xong thì sau đó $search sẽ tìm kiếm trong các trường có index text có giá trị giống với content
-  async search({ limit, page, content, user_id }: { limit: number; page: number; content: string; user_id: string }) {
+  async search({
+    limit,
+    page,
+    content,
+    user_id,
+    media_type
+  }: {
+    limit: number
+    page: number
+    content: string
+    user_id: string
+    media_type: MediaTypeQuery
+  }) {
+    const $match: any = {
+      $text: {
+        $search: content
+      }
+    }
+
+    // $match['medias.type'] = MediaType.Image ($match là một object, nếu có media type thì thêm vào đối tượng $match một trường medias.type có giá trị là MediaType.Image)
+    // $match: {
+    //   $text: {
+    //     $search: content
+    //   },
+    //   'medias.type': MediaType.Image
+    // }
+    if (media_type) {
+      if (media_type === MediaTypeQuery.Image) {
+        $match['medias.type'] = MediaType.Image
+      }
+
+      //$in là một toán tử so sánh được sử dụng để kiểm tra xem giá trị của một trường có nằm trong một mảng cụ thể hay không (media.type có thể là MediaType.Video hoặc MediaType.HLS)
+      if (media_type === MediaTypeQuery.Video) {
+        $match['medias.type'] = {
+          $in: [MediaType.Video, MediaType.HLS]
+        }
+      }
+    }
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
           {
-            $match: {
-              $text: {
-                $search: content
-              }
-            }
+            $match
           },
           {
             $lookup: {
@@ -182,11 +215,7 @@ class SearchService {
       databaseService.tweets
         .aggregate([
           {
-            $match: {
-              $text: {
-                $search: content
-              }
-            }
+            $match
           },
           {
             $lookup: {
