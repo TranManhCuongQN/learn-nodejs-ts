@@ -12,6 +12,7 @@ import { ErrorWithStatus } from '~/models/error'
 import HTTP_STATUS from '~/constants/httpStatus'
 import Follower from '~/models/schemas/follower.schema'
 import axios from 'axios'
+import { sendForgotPasswordEmail, sendVerifyRegisterEmail } from '~/utils/email'
 config()
 
 class UsersService {
@@ -205,7 +206,6 @@ class UsersService {
       verify: UserVerifyStatus.Unverified
     })
 
-    console.log('email_verify_token', email_verify_token)
     const result = await databaseService.users.insertOne(
       new User({
         ...payload,
@@ -228,6 +228,8 @@ class UsersService {
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, iat, exp })
     )
+
+    await sendVerifyRegisterEmail(payload.email, email_verify_token)
 
     return {
       access_token,
@@ -315,13 +317,14 @@ class UsersService {
     }
   }
 
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = await this.signEmailVerifyToken({
       user_id,
       verify: UserVerifyStatus.Unverified
     })
     // Gỉa bộ gửi email
     console.log('Rensend verify email: ', email_verify_token)
+    await sendVerifyRegisterEmail(email, email_verify_token)
 
     // Cập nhật lại giá trị email_verify_token trong document user
     await databaseService.users.updateOne(
@@ -340,7 +343,7 @@ class UsersService {
     }
   }
 
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({ user_id, verify, email }: { user_id: string; verify: UserVerifyStatus; email: string }) {
     const forgot_password_token = await this.signForgotPasswordToken({
       user_id,
       verify
@@ -353,8 +356,12 @@ class UsersService {
         }
       }
     ])
+
     // Gửi email kèm đường link đến email người dùng: https://twitter.com/forgot-password?token=token
     console.log('forgot_password_token: ', forgot_password_token)
+
+    await sendForgotPasswordEmail(email, forgot_password_token)
+
     return {
       message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
