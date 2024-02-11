@@ -15,22 +15,49 @@ const s3 = new S3({
 
 s3.listBuckets({}).then((data) => console.log(data))
 
-const file = fs.readFileSync(path.resolve('uploads/images/pampam.jpg'))
-const parallelUploads3 = new Upload({
-  client: s3,
-  params: { Bucket: 'twitter-clone-ap-southeast-1-2024', Key: 'anh1.jpg', Body: file, ContentType: 'image/jpeg' },
-  tags: [
-    /*...*/
-  ], // optional tags
-  queueSize: 4, // optional concurrency configuration
-  partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
-  leavePartsOnError: false // optional manually handle dropped parts
-})
+// const file = fs.readFileSync(path.resolve('uploads/images/pampam.jpg'))
+// const parallelUploads3 = new Upload({
+//   client: s3,
+//   params: { Bucket: 'twitter-clone-ap-southeast-1-2024', Key: 'anh1.jpg', Body: file, ContentType: 'image/jpeg' },
+//   tags: [
+//     /*...*/
+//   ], // optional tags
+//   queueSize: 4, // optional concurrency configuration
+//   partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
+//   leavePartsOnError: false // optional manually handle dropped parts
+// })
 
-parallelUploads3.on('httpUploadProgress', (progress) => {
-  console.log(progress)
-})
+// parallelUploads3.on('httpUploadProgress', (progress) => {
+//   console.log(progress)
+// })
 
-parallelUploads3.done().then((res) => {
-  console.log(res)
-})
+// parallelUploads3.done().then((res) => {
+//   console.log(res)
+// })
+
+export const uploadFileToS3 = ({
+  filename,
+  filepath,
+  contentType
+}: {
+  filename: string
+  filepath: string
+  contentType: string
+}) => {
+  const parallelUploads3 = new Upload({
+    client: s3,
+    params: {
+      Bucket: 'twitter-clone-ap-southeast-1-2024',
+      Key: filename,
+      Body: fs.readFileSync(filepath),
+      ContentType: contentType
+    },
+    tags: [
+      /*...*/
+    ], // optional tags
+    queueSize: 4, // optional concurrency configuration
+    partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
+    leavePartsOnError: false // optional manually handle dropped parts
+  })
+  return parallelUploads3.done()
+}

@@ -12,6 +12,9 @@ import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
 import databaseService from '~/services/database.service'
 import VideoStatus from '~/models/schemas/videoStatus.schema'
 import { config } from 'dotenv'
+import { uploadFileToS3 } from '~/utils/s3'
+import mime from 'mime'
+import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 
 class Queue {
   items: string[]
@@ -106,15 +109,31 @@ class MediasService {
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullname(file.newFilename)
-        const newPath = path.resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`)
+        const newFullFilename = `${newName}.jpg`
+        const newPath = path.resolve(UPLOAD_IMAGE_DIR, newFullFilename)
         await sharp(file.filepath).jpeg().toFile(newPath)
 
         // xóa file ảnh gốc trong thư mục temp
-        fs.unlinkSync(file.filepath)
+        // fs.unlinkSync(file.filepath)
+
+        const s3Result = await uploadFileToS3({
+          filename: newFullFilename,
+          filepath: newPath,
+          contentType: mime.getType(newPath) as string
+        })
+
+        // delete file in local
+        await Promise.all([fsPromise.unlink(file.filepath), fsPromise.unlink(newPath)])
+
+        // return {
+        //   url: isProduction
+        //     ? `${process.env.HOST}/static/image/${newName}.jpg`
+        //     : `http://localhost:${process.env.PORT}/static/image/${newName}.jpg`,
+        //   type: MediaType.Image
+        // }
+
         return {
-          url: isProduction
-            ? `${process.env.HOST}/static/image/${newName}.jpg`
-            : `http://localhost:${process.env.PORT}/static/image/${newName}.jpg`,
+          url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
           type: MediaType.Image
         }
       })
