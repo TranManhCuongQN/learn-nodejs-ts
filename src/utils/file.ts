@@ -63,7 +63,7 @@ export const handleUploadVideo = async (req: Request) => {
   const form = formidable({
     uploadDir: folderPath,
     maxFiles: 1,
-    maxFileSize: 50 * 1024 * 1024, // 50MB
+    maxFileSize: 50 * 1024 * 1024 * 1024, // 50MB
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'video' && Boolean(mimetype?.includes('mp4') || mimetype?.includes('quicktime'))
       if (!valid) {
@@ -102,7 +102,27 @@ export const getNameFromFullname = (fullname: string) => {
   return namearr.join('')
 }
 
+
 export const getExtension = (fullname: string) => {
   const namearr = fullname.split('.')
   return namearr[namearr.length - 1]
+}
+
+// Get all files in a directory (folder) => return an array of full path of files in the directory
+export const getFiles = (dir: string, files: string[] = []) => {
+  // Get an array of all files and directories in the passed directory using fs.readdirSync
+  const fileList = fs.readdirSync(dir)
+  // Create the full path of the file/directory by concatenating the passed directory and file/directory name
+  for (const file of fileList) {
+    const name = `${dir}/${file}`
+    // Check if the current file/directory is a directory using fs.statSync
+    if (fs.statSync(name).isDirectory()) {
+      // If it is a directory, recursively call the getFiles function with the directory path and the files array
+      getFiles(name, files)
+    } else {
+      // If it is a file, push the full path to the files array
+      files.push(name)
+    }
+  }
+  return files
 }
