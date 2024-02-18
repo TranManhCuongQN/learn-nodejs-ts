@@ -14,6 +14,7 @@ import likesRouter from './routes/likes.router'
 import searchRouter from '~/routes/search.router'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import Conversation from './models/schemas/conversation.schema'
 // import '~/utils/fake'
 
 const app = express()
@@ -74,9 +75,21 @@ io.on('connection', (socket) => {
     socket_id: socket.id
   }
   console.log(users)
-  socket.on('private message', (data) => {
+  socket.on('private message', async (data) => {
     // socket_id của người nhận
-    const receiver_socket_id = users[data.to].socket_id
+    const receiver_socket_id = users[data.to]?.socket_id
+
+    if (!receiver_socket_id) {
+      return
+    }
+
+    await databaseService.conversations.insertOne(
+      new Conversation({
+        sender_id: data.from,
+        receiver_id: data.to,
+        content: data.content
+      })
+    )
 
     // gửi đến socket_id của người nhận
     socket.to(receiver_socket_id).emit('receive private message', {
