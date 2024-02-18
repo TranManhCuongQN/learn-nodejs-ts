@@ -52,21 +52,52 @@ const io = new Server(httpServer, {
   }
 })
 
+const users: {
+  [key: string]: {
+    socket_id: string
+  }
+} = {}
+
 // khi client connect success thì cái callback này sẽ được gọi (socket) => { ... }
 // socket.on là lắng nghe sự kiện từ client gửi lên
 // socket.emit là gửi sự kiện từ server xuống client
 io.on('connection', (socket) => {
   console.log(`user ${socket.id} connected`)
+
+  const user_id = socket.handshake.auth._id
+  // {'user_id': {socket_id: 'socket_id'}}
+  // {
+  //   '65c0b8adda0742a7dad804dd': { socket_id: '-E07swDikIPBapmHAAA8' },
+  //   '65c0bbd5da0742a7dad804e1': { socket_id: '9kAodQKlHhIPQpiFAAA-' }
+  // }
+  users[user_id] = {
+    socket_id: socket.id
+  }
+  console.log(users)
+  socket.on('private message', (data) => {
+    // socket_id của người nhận
+    const receiver_socket_id = users[data.to].socket_id
+
+    // gửi đến socket_id của người nhận
+    socket.to(receiver_socket_id).emit('receive private message', {
+      content: data.content,
+      from: user_id
+    })
+  })
+
   socket.on('disconnect', () => {
+    delete users[user_id]
     console.log(`user ${socket.id} disconnected`)
   })
 
-  socket.on('hello', (agr) => {
-    console.log(agr)
-  })
-  socket.emit('hi', {
-    message: `Xin chào ${socket.id} đã kết nối thành công`
-  })
+  console.log(users)
+
+  // socket.on('hello', (agr) => {
+  //   console.log(agr)
+  // })
+  // socket.emit('hi', {
+  //   message: `Xin chào ${socket.id} đã kết nối thành công`
+  // })
 })
 
 httpServer.listen(port, () => {
