@@ -5,7 +5,7 @@ import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
 import { initFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
-import { config } from 'dotenv'
+import { envConfig } from '~/constants/config'
 import staticRouter from './routes/static.router'
 import cors from 'cors'
 import tweetsRouter from './routes/tweet.router'
@@ -39,7 +39,7 @@ const openapiSpecification = swaggerJsdoc(options)
 
 const app = express()
 const httpServer = createServer(app)
-const port = process.env.PORT || 4000
+const port = envConfig.port || 4040
 app.use(express.json())
 app.use(cors())
 
