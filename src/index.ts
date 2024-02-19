@@ -5,9 +5,10 @@ import { defaultErrorHandler } from './middlewares/error.middleware'
 import mediasRouter from './routes/medias.router'
 import { initFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR } from '~/constants/dir'
-import { envConfig } from '~/constants/config'
+import { envConfig, isProduction } from '~/constants/config'
 import staticRouter from './routes/static.router'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
+import helmet from 'helmet'
 import tweetsRouter from './routes/tweet.router'
 import bookmarksRouter from './routes/bookmarks.router'
 import likesRouter from './routes/likes.router'
@@ -41,7 +42,12 @@ const app = express()
 const httpServer = createServer(app)
 const port = envConfig.port || 4040
 app.use(express.json())
-app.use(cors())
+
+app.use(helmet())
+const corsOptions: CorsOptions = {
+  origin: isProduction ? envConfig.clientUrl : '*'
+}
+app.use(cors(corsOptions))
 
 databaseService.connect().then(() => {
   databaseService.indexUsers()
