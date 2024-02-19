@@ -16,6 +16,7 @@ import searchRouter from '~/routes/search.router'
 import { createServer } from 'http'
 import conversationsRouter from './routes/conversation.router'
 import initSocket from './utils/socket'
+import rateLimit from 'express-rate-limit'
 // import '~/utils/fake'
 import YAML from 'yaml'
 // import fs from 'fs'
@@ -48,6 +49,15 @@ const corsOptions: CorsOptions = {
   origin: isProduction ? envConfig.clientUrl : '*'
 }
 app.use(cors(corsOptions))
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes (default milliseconds)
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes) (mỗi ip chỉ đc 100 request trong 15 phút)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers
+  // store: ... , // Use an external store for more precise rate limiting
+})
+app.use(limiter)
 
 databaseService.connect().then(() => {
   databaseService.indexUsers()
