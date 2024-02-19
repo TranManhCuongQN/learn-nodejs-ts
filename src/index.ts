@@ -16,6 +16,26 @@ import { createServer } from 'http'
 import conversationsRouter from './routes/conversation.router'
 import initSocket from './utils/socket'
 // import '~/utils/fake'
+import YAML from 'yaml'
+// import fs from 'fs'
+// import path from 'path'
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsdoc from 'swagger-jsdoc'
+// const file = fs.readFileSync(path.resolve('twitter-swagger.yaml'), 'utf8')
+// const swaggerDocument = YAML.parse(file)
+
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'X clone (Twitter API)',
+      version: '1.0.0'
+    }
+  },
+  apis: ['./src/openapi/*.yaml'] // files containing annotations as above
+  // apis: ['./src/routes/*.ts'] // files containing annotations as above
+}
+const openapiSpecification = swaggerJsdoc(options)
 
 const app = express()
 const httpServer = createServer(app)
@@ -34,6 +54,7 @@ databaseService.connect().then(() => {
 //  tao folder upload
 initFolder()
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
