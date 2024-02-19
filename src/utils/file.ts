@@ -102,7 +102,6 @@ export const getNameFromFullname = (fullname: string) => {
   return namearr.join('')
 }
 
-
 export const getExtension = (fullname: string) => {
   const namearr = fullname.split('.')
   return namearr[namearr.length - 1]
@@ -114,7 +113,7 @@ export const getFiles = (dir: string, files: string[] = []) => {
   const fileList = fs.readdirSync(dir)
   // Create the full path of the file/directory by concatenating the passed directory and file/directory name
   for (const file of fileList) {
-    const name = `${dir}/${file}`
+    const name = path.join(dir, file)
     // Check if the current file/directory is a directory using fs.statSync
     if (fs.statSync(name).isDirectory()) {
       // If it is a directory, recursively call the getFiles function with the directory path and the files array

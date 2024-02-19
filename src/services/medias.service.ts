@@ -16,7 +16,6 @@ import { uploadFileToS3 } from '~/utils/s3'
 import mime from 'mime'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 import { rimrafSync } from 'rimraf'
-
 config()
 
 class Queue {
@@ -29,7 +28,7 @@ class Queue {
   async enqueue(item: string) {
     this.items.push(item)
     // item = /home/duy/Downloads/12312312/1231231221.mp4
-    const idName = getNameFromFullname(item.split('/').pop() as string)
+    const idName = getNameFromFullname(path.basename(item))
     await databaseService.videoStatus.insertOne(
       new VideoStatus({
         name: idName,
@@ -43,7 +42,7 @@ class Queue {
     if (this.items.length > 0) {
       this.encoding = true
       const videoPath = this.items[0]
-      const idName = getNameFromFullname(videoPath.split('/').pop() as string)
+      const idName = getNameFromFullname(path.basename(videoPath))
       await databaseService.videoStatus.updateOne(
         {
           name: idName
@@ -61,13 +60,14 @@ class Queue {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         this.items.shift()
         const files = getFiles(path.resolve(UPLOAD_VIDEO_DIR, idName))
+        const slash = (await import('slash')).default
         await Promise.all(
           files.map((filepath) => {
             // filepath: /Users/duthanhduoc/Documents/DuocEdu/NodeJs-Super/Twitter/uploads/videos/6vcpA2ujL7EuaD5gvaPvl/v0/fileSequence0.ts
             const filename = 'videos-hls' + filepath.replace(path.resolve(UPLOAD_VIDEO_DIR), '')
             return uploadFileToS3({
               filepath,
-              filename,
+              filename: slash(filename),
               contentType: mime.getType(filepath) as string
             })
           })
