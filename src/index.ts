@@ -70,6 +70,7 @@ const users: {
 
 // register middleware cho socket (run trước khi connection)
 io.use(async (socket, next) => {
+  console.log(socket.id, socket.handshake.auth)
   const { Authorization } = socket.handshake.auth
   const access_token = Authorization?.split(' ')[1]
   try {
